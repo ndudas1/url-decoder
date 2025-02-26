@@ -1,14 +1,17 @@
 import requests
+import asyncio
+
 from bs4 import BeautifulSoup
 
 url = "https://docs.google.com/document/d/e/2PACX-1vQGUck9HIFCyezsrBSnmENk5ieJuYwpt7YHYEzeNJkIb9OSDdx-ov2nRNReKQyey-cwJOoEKUhLmN9z/pub"
-url = "https://docs.google.com/document/d/e/2PACX-1vRMx5YQlZNa3ra8dYYxmv-QIQ3YJe8tbI3kqcuC7lQiZm-CSEznKfN_HYNSpoXcZIV3Y_O3YoUB1ecq/pub"
+# url = "https://docs.google.com/document/d/e/2PACX-1vRMx5YQlZNa3ra8dYYxmv-QIQ3YJe8tbI3kqcuC7lQiZm-CSEznKfN_HYNSpoXcZIV3Y_O3YoUB1ecq/pub"
 
-def decode(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")  # Use html.parser if you're working with local files or response.text
+async def decode(url):
+    loop = asyncio.get_event_loop()
+    response = await loop.run_in_executor(None, lambda url: requests.get(url), url)
+    soup = BeautifulSoup(response.text, "html.parser")
     table = soup.find("table")
-    rows = table.find_all("tr")[1:]  # Skip the first row (header)
+    rows = table.find_all("tr")[1:]
 
     output = []
     dict = {}
@@ -38,4 +41,7 @@ def decode(url):
     for row in output:
         print("".join(row))
 
-goodies = decode(url)
+async def main():
+    await decode(url)
+
+asyncio.run(main())
