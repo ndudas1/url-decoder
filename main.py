@@ -26,8 +26,6 @@ async def decode(url):
         max_y = max(max_y, int(y))
         dict[f"{x},{y}"] = char
 
-    dict = {k: v for k, v in sorted(dict.items(), key=lambda item: item[0])} 
-
     for y in range(max_y + 1):
         output.append([])
         for x in range(max_x + 1):
